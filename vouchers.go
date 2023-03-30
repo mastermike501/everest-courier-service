@@ -34,3 +34,11 @@ var vouchers = map[string]Voucher{
 		},
 	},
 }
+
+func getVoucherInfo(code string) *Voucher {
+	if voucher, ok := vouchers[code]; ok {
+		return &voucher
+	}
+
+	return nil
+}
