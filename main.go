@@ -20,14 +20,8 @@ func main() {
 	// read package information
 	for i := 0; i < numOfPkgs; i++ {
 		fmt.Printf("Enter package %d information: ", i+1)
-		input, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Println("An error occured while reading input. Please try again", err)
-			i--
-			continue
-		}
 
-		newPackage, err := readPackage(input)
+		newPackage, err := readPackage(reader)
 		if err != nil {
 			i--
 			continue
@@ -44,7 +38,13 @@ func main() {
 	}
 }
 
-func readPackage(input string) (*Package, error) {
+func readPackage(reader *bufio.Reader) (*Package, error) {
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("An error occured while reading input. Please try again", err)
+		return nil, err
+	}
+
 	packageInfo := strings.Split(strings.TrimSpace(input), " ")
 	if len(packageInfo) != 4 {
 		fmt.Println("The package has missing information. Please try again")
