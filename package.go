@@ -2,7 +2,7 @@ package main
 
 type Package struct {
 	Name      string
-	Weight    float32
-	Distance  float32
+	Weight    float64
+	Distance  float64
 	OfferCode string
 }

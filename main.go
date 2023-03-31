@@ -33,8 +33,17 @@ func main() {
 	for _, pkg := range packages {
 		deliveryCost := calculateDeliveryCost(baseDeliveryCost, &pkg)
 		voucherInfo := getVoucherInfo(pkg.OfferCode)
-		fmt.Printf("Delivery cost: $%.2f\n", deliveryCost)
-		fmt.Printf("Voucher: %s\n", voucherInfo.Description)
+		discount := 0.0
+		totalCost := deliveryCost
+
+		isVoucherValid := voucherInfo.ValidForDelivery(pkg.Distance, pkg.Weight)
+		if isVoucherValid {
+			discount = deliveryCost * voucherInfo.Value
+			totalCost = deliveryCost - discount
+		}
+
+		fmt.Printf("%s $%.2f $%.2f", pkg.Name, discount, totalCost)
+		fmt.Println()
 	}
 }
 
@@ -65,13 +74,13 @@ func readPackage(reader *bufio.Reader) (*Package, error) {
 
 	return &Package{
 		Name:      packageInfo[0],
-		Weight:    float32(weight),
-		Distance:  float32(distance),
+		Weight:    float64(weight),
+		Distance:  float64(distance),
 		OfferCode: packageInfo[3],
 	}, nil
 }
 
-func readDeliveryCostAndNumOfPkgs() (float32, int, error) {
+func readDeliveryCostAndNumOfPkgs() (float64, int, error) {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter [Base delivery cost] and [Number of packages]: ")
@@ -95,9 +104,9 @@ func readDeliveryCostAndNumOfPkgs() (float32, int, error) {
 		return -1, -1, err
 	}
 
-	return float32(baseDeliveryCost), numPkgs, nil
+	return float64(baseDeliveryCost), numPkgs, nil
 }
 
-func calculateDeliveryCost(baseDeliveryCost float32, pkg *Package) float32 {
-	return baseDeliveryCost + (pkg.Weight * 10) + (pkg.Distance * 6)
+func calculateDeliveryCost(baseDeliveryCost float64, pkg *Package) float64 {
+	return baseDeliveryCost + (pkg.Weight * 10) + (pkg.Distance * 5)
 }
