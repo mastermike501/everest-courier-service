@@ -8,13 +8,6 @@ import (
 	"strings"
 )
 
-type Package struct {
-	Name      string
-	Weight    float32
-	Distance  float32
-	OfferCode string
-}
-
 func main() {
 	baseDeliveryCost, numOfPkgs, err := readDeliveryCostAndNumOfPkgs()
 	if err != nil {
@@ -31,20 +24,22 @@ func main() {
 		if err != nil {
 			fmt.Println("An error occured while reading input. Please try again", err)
 			i--
-		} else {
-			newPackage, err := readPackage(input)
-			if err != nil {
-				i--
-			} else {
-				packages = append(packages, *newPackage)
-			}
+			continue
 		}
+
+		newPackage, err := readPackage(input)
+		if err != nil {
+			i--
+			continue
+		}
+
+		packages = append(packages, *newPackage)
 	}
 
 	for _, pkg := range packages {
 		deliveryCost := calculateDeliveryCost(baseDeliveryCost, &pkg)
 		voucherInfo := getVoucherInfo(pkg.OfferCode)
-		fmt.Printf("Delivery cost: $%f\n", deliveryCost)
+		fmt.Printf("Delivery cost: $%.2f\n", deliveryCost)
 		fmt.Printf("Voucher: %s\n", voucherInfo.Description)
 	}
 }
