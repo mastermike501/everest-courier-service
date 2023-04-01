@@ -9,12 +9,13 @@ import (
 )
 
 func main() {
-	baseDeliveryCost, numOfPkgs, err := readDeliveryCostAndNumOfPkgs()
+	reader := bufio.NewReader(os.Stdin)
+
+	baseDeliveryCost, numOfPkgs, err := readDeliveryCostAndNumOfPkgs(reader)
 	if err != nil {
 		os.Exit(1)
 	}
 
-	reader := bufio.NewReader(os.Stdin)
 	packages := []Package{}
 
 	// read package information
@@ -80,8 +81,7 @@ func readPackage(reader *bufio.Reader) (*Package, error) {
 	}, nil
 }
 
-func readDeliveryCostAndNumOfPkgs() (float64, int, error) {
-	reader := bufio.NewReader(os.Stdin)
+func readDeliveryCostAndNumOfPkgs(reader *bufio.Reader) (float64, int, error) {
 
 	fmt.Print("Enter [Base delivery cost] and [Number of packages]: ")
 	input, err := reader.ReadString('\n')

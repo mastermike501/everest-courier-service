@@ -39,7 +39,7 @@ func getVoucherInfo(code string) *Voucher {
 		Description: "No Discount",
 		Value:       0,
 		ValidForDelivery: func(distance, weight float64) bool {
-			return true
+			return false
 		},
 	}
 }
