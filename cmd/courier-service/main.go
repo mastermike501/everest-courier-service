@@ -9,11 +9,17 @@ import (
 )
 
 func main() {
+	var baseDeliveryCost float64
+	var numOfPkgs int
+	var err error
 	reader := bufio.NewReader(os.Stdin)
 
-	baseDeliveryCost, numOfPkgs, err := readDeliveryCostAndNumOfPkgs(reader)
-	if err != nil {
-		os.Exit(1)
+	// read delivery cost and num of packages
+	for {
+		baseDeliveryCost, numOfPkgs, err = readDeliveryCostAndNumOfPkgs(reader)
+		if err == nil {
+			break
+		}
 	}
 
 	packages := []Package{}
