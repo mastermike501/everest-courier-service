@@ -1,2 +1,3 @@
-go build .
-./everest-courier-service.exe
+rm *.exe
+go build ./cmd/courier-service
+./courier-service.exe
