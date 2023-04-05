@@ -92,24 +92,40 @@ func main() {
 		items = append(items, *item)
 	}
 
-	// iterate over items array and remove selected items
-	// repeat until items array is empty
-	shipment := 1
+	// for each shipment do 2 things
+	// 1. Calculate the delivery time for each package in shipment and assign it to package
+	// 2. Once delivery times for all packages in shipment are calculated, find the maximum.
+	// 		The (maximum * 2) is the total time a courier would spend deivering the shipment.
+
+	// iterate over remaining packages and remove packages that have been selected
+	// repeat until no more remaining packages
+	shipments := []*Shipment{}
 	for len(remainingPkgs) > 0 {
+		// solve 0/1 knapsack problem to get selected packages for a shipment
 		selected := KnapsackSolver(items, fleet.MaxCarriableWeight)
 
-		fmt.Printf("Shipment %v\n", shipment)
+		// for each index returned:
+		// 1. get the package
+		// 2. calculate the package's delivery time
+		// 3. add the package to the list of packages (ie. shipment)
+		selectedPkgs := []*Package{}
 		for _, s := range selected {
-			fmt.Printf("%s ", remainingPkgs[s].Name)
+			pkg := &remainingPkgs[s]
+			pkg.DeliveryTime = calculateDeliveryTime(pkg.Distance, fleet.MaxSpeed)
+			selectedPkgs = append(selectedPkgs, &remainingPkgs[s])
 		}
-		fmt.Println()
-		fmt.Println()
 
-		// remove selected items
+		// create a Shipment which takes in the list of packages and generates
+		// the total delivery time for the Shipment
+		shipment := Shipment{
+			DeliveryTime: 0.0,
+		}
+		shipment.addPackages(selectedPkgs)
+		shipments = append(shipments, &shipment)
+
+		// remove selected packages
 		items = RemoveAtIndexKItem(items, selected)
 		remainingPkgs = RemoveAtIndexPackage(remainingPkgs, selected)
-
-		shipment++
 	}
 
 }
@@ -209,4 +225,8 @@ func readFleetInfo(reader *bufio.Reader) (*Fleet, error) {
 
 func calculateDeliveryCost(baseDeliveryCost float64, pkg *Package) float64 {
 	return baseDeliveryCost + (pkg.Weight * 10) + (pkg.Distance * 5)
+}
+
+func calculateDeliveryTime(distance float64, speed int) float64 {
+	return distance / float64(speed)
 }
