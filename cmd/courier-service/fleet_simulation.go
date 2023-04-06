@@ -7,12 +7,11 @@ import (
 	"github.com/mastermike501/everest-courier-service/fleet"
 )
 
-// Calculate package delivery times by performing discrete Simulate
+// Calculate package delivery times by performing discrete simulation
 func FleetSimulation(f *fleet.Fleet, shipments []*ev_package.Shipment) {
 	currentTime := 0.0
 
 	// create vehicles
-	// fleet.
 	vehicles := []*fleet.Vehicle{}
 	for i := 0; i < f.GetNumVehicles(); i++ {
 		v := fleet.NewVehicle(fmt.Sprint(i+1), 0.0)

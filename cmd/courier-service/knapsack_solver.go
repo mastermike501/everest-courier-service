@@ -17,6 +17,9 @@ type KItem struct {
 	pkg    *ev_package.Package
 }
 
+// This function was created by me prompting ChatGPT several times to get the
+// right input and output. The return value is a slice containing the packages
+// that are selected.
 func KnapsackSolver(items []KItem, capacity float64) []int {
 	// Create a 2D slice to store the maximum values for each capacity and subset of items
 	dp := make([][]float64, len(items)+1)
