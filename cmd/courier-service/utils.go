@@ -26,9 +26,9 @@ func RemoveAtIndexKItem(slice []KItem, indices []int) []KItem {
 	return filtered
 }
 
-func RemoveAtIndexPackage(slice []Package, indices []int) []Package {
+func RemoveAtIndexPackage(slice []*Package, indices []int) []*Package {
 	// Create a new slice to hold the filtered elements
-	filtered := make([]Package, 0)
+	filtered := make([]*Package, 0)
 	// Create a map to hold the indices to remove
 	indicesToRemove := make(map[int]bool)
 	for _, index := range indices {
