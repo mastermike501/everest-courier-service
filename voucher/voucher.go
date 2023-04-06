@@ -1,4 +1,4 @@
-package main
+package voucher
 
 type Voucher struct {
 	Description      string
