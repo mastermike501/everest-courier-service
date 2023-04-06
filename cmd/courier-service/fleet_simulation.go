@@ -42,12 +42,12 @@ func FleetSimulation(f *fleet.Fleet, shipments []*ev_package.Shipment) {
 		}
 
 		// update delivery times for packages
-		for _, p := range s.Packages {
+		for _, p := range s.GetPackages() {
 			p.DeliveryTime = currentTime + p.TimeToDest
 		}
 
 		// set the return time for selected vehicle
-		selectedVehicle.SetReturnTime((s.OneWayDeliveryTime * 2) + currentTime)
+		selectedVehicle.SetReturnTime((s.GetOneWayDeliveryTime() * 2) + currentTime)
 
 		shipmentIdx++
 

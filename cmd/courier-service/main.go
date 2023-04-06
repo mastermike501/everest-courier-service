@@ -102,12 +102,9 @@ func runKnapsackSolver(packages []*ev_package.Package, fleet *fleet.Fleet) (ship
 
 		// create a Shipment which takes in the list of packages and generates
 		// the total delivery time for the Shipment
-		shipment := ev_package.Shipment{
-			OneWayDeliveryTime: 0.0,
-			Packages:           make(map[string]*ev_package.Package),
-		}
+		shipment := ev_package.NewShipment()
 		shipment.AddPackages(selectedPkgs)
-		shipments = append(shipments, &shipment)
+		shipments = append(shipments, shipment)
 
 		// remove selected packages
 		items = RemoveAtIndexKItem(items, selected)
