@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/mastermike501/everest-courier-service/fleet"
 )
 
 func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*Package, error) {
@@ -87,7 +89,7 @@ func readDeliveryCostAndNumOfPkgs(reader *bufio.Reader) (float64, int, error) {
 	return float64(baseDeliveryCost), numPkgs, nil
 }
 
-func readFleetInfo(reader *bufio.Reader) (*Fleet, error) {
+func readFleetInfo(reader *bufio.Reader) (*fleet.Fleet, error) {
 	fmt.Print("Enter fleet info: ")
 	input, err := reader.ReadString('\n')
 	if err != nil {
@@ -120,7 +122,7 @@ func readFleetInfo(reader *bufio.Reader) (*Fleet, error) {
 		return nil, err
 	}
 
-	return &Fleet{
+	return &fleet.Fleet{
 		NumVehicles:        numVehicles,
 		MaxSpeed:           maxSpeed,
 		MaxCarriableWeight: maxCarriableWeight,

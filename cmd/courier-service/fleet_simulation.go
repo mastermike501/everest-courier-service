@@ -1,15 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/mastermike501/everest-courier-service/fleet"
+)
 
 // Calculate package delivery times by performing discrete Simulate
-func FleetSimulation(fleet *Fleet, shipments []*Shipment) {
+func FleetSimulation(f *fleet.Fleet, shipments []*Shipment) {
 	currentTime := 0.0
 
 	// create vehicles
-	vehicles := []*Vehicle{}
-	for i := 0; i < fleet.NumVehicles; i++ {
-		v := &Vehicle{
+	// fleet.
+	vehicles := []*fleet.Vehicle{}
+	for i := 0; i < f.NumVehicles; i++ {
+		v := &fleet.Vehicle{
 			Name:       fmt.Sprint(i + 1),
 			ReturnTime: 0.0,
 		}
@@ -56,7 +61,7 @@ func FleetSimulation(fleet *Fleet, shipments []*Shipment) {
 	}
 }
 
-func getMinimumReturnTime(vehicles []*Vehicle) float64 {
+func getMinimumReturnTime(vehicles []*fleet.Vehicle) float64 {
 	minRetTime := vehicles[0].ReturnTime
 
 	for _, v := range vehicles {
@@ -68,13 +73,13 @@ func getMinimumReturnTime(vehicles []*Vehicle) float64 {
 	return minRetTime
 }
 
-func updateVehicleReturnTimes(vehicles []*Vehicle, curTime float64) {
+func updateVehicleReturnTimes(vehicles []*fleet.Vehicle, curTime float64) {
 	for _, v := range vehicles {
 		v.UpdateReturnTime(curTime)
 	}
 }
 
-func selectFreeVehicle(vehicles []*Vehicle) *Vehicle {
+func selectFreeVehicle(vehicles []*fleet.Vehicle) *fleet.Vehicle {
 	for _, v := range vehicles {
 		if v.ReturnTime == 0.0 {
 			return v

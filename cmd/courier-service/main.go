@@ -4,13 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/mastermike501/everest-courier-service/fleet"
 )
 
 func main() {
 	var baseDeliveryCost float64
 	var numOfPkgs int
 	var err error
-	var fleet *Fleet
+	var fleet *fleet.Fleet
 	reader := bufio.NewReader(os.Stdin)
 
 	// read delivery cost and num of packages
@@ -60,7 +62,7 @@ func main() {
 	}
 }
 
-func runKnapsackSolver(packages []*Package, fleet *Fleet) (shipments []*Shipment) {
+func runKnapsackSolver(packages []*Package, fleet *fleet.Fleet) (shipments []*Shipment) {
 	remainingPkgs := make([]*Package, len(packages))
 	copy(remainingPkgs, packages)
 
