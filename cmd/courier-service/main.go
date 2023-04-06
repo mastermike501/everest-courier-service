@@ -103,7 +103,7 @@ func runKnapsackSolver(packages []*Package, fleet *Fleet) (shipments []*Shipment
 			OneWayDeliveryTime: 0.0,
 			Packages:           make(map[string]*Package),
 		}
-		shipment.addPackages(selectedPkgs)
+		shipment.AddPackages(selectedPkgs)
 		shipments = append(shipments, &shipment)
 
 		// remove selected packages

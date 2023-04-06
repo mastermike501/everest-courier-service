@@ -70,7 +70,7 @@ func getMinimumReturnTime(vehicles []*Vehicle) float64 {
 
 func updateVehicleReturnTimes(vehicles []*Vehicle, curTime float64) {
 	for _, v := range vehicles {
-		v.updateReturnTime(curTime)
+		v.UpdateReturnTime(curTime)
 	}
 }
 

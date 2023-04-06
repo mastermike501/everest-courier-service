@@ -31,7 +31,7 @@ type Shipment struct {
 	Packages           map[string]*Package
 }
 
-func (s *Shipment) addPackages(pkgs []*Package) {
+func (s *Shipment) AddPackages(pkgs []*Package) {
 	// assign packages to internal data struct
 	for _, p := range pkgs {
 		s.Packages[p.Name] = p

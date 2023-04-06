@@ -32,7 +32,7 @@ func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*Package, erro
 		return nil, err
 	}
 
-	voucher := getVoucherInfo(packageInfo[3])
+	voucher := GetVoucherInfo(packageInfo[3])
 	discount, total := GetDiscountAndDeliveryCost(baseDeliveryCost, weight, distance, voucher)
 
 	return &Package{

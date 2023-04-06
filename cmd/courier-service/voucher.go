@@ -34,7 +34,7 @@ var vouchers = map[string]Voucher{
 	},
 }
 
-func getVoucherInfo(code string) *Voucher {
+func GetVoucherInfo(code string) *Voucher {
 	if voucher, ok := vouchers[code]; ok {
 		return &voucher
 	}

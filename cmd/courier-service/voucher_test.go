@@ -48,7 +48,7 @@ func TestGetVoucherInfo(t *testing.T) {
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				if got := getVoucherInfo(tt.code); !reflect.DeepEqual(got, tt.want) {
+				if got := GetVoucherInfo(tt.code); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("getVoucherInfo() = %v, want %v", got, tt.want)
 				}
 			})
@@ -56,7 +56,7 @@ func TestGetVoucherInfo(t *testing.T) {
 	})
 
 	t.Run("Invalid voucher code", func(t *testing.T) {
-		voucher := getVoucherInfo("INVALID")
+		voucher := GetVoucherInfo("INVALID")
 		if voucher.Description != "No Discount" {
 			t.Errorf("Expected voucher.Description to be 'No Discount', but got %v", voucher.Description)
 		}
