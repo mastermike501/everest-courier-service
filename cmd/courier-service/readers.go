@@ -8,6 +8,7 @@ import (
 
 	"github.com/mastermike501/everest-courier-service/ev_package"
 	"github.com/mastermike501/everest-courier-service/fleet"
+	"github.com/mastermike501/everest-courier-service/voucher"
 )
 
 func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*ev_package.Package, error) {
@@ -35,7 +36,7 @@ func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*ev_package.Pa
 		return nil, err
 	}
 
-	voucher := GetVoucherInfo(packageInfo[3])
+	voucher := voucher.GetVoucherInfo(packageInfo[3])
 	discount, total := GetDiscountAndDeliveryCost(baseDeliveryCost, weight, distance, voucher)
 
 	return &ev_package.Package{
@@ -47,11 +48,11 @@ func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*ev_package.Pa
 	}, nil
 }
 
-func GetDiscountAndDeliveryCost(baseDeliveryCost, weight, distance float64, v *Voucher) (discount, total float64) {
+func GetDiscountAndDeliveryCost(baseDeliveryCost, weight, distance float64, v *voucher.Voucher) (discount, total float64) {
 	grossTotal := baseDeliveryCost + (weight * 10) + (distance * 5)
 
 	// invalid voucher? Return the gross
-	if !v.Valid {
+	if !v.IsValid() {
 		return 0, grossTotal
 	}
 
@@ -61,7 +62,7 @@ func GetDiscountAndDeliveryCost(baseDeliveryCost, weight, distance float64, v *V
 		return 0, grossTotal
 	}
 
-	discount = grossTotal * v.Value
+	discount = grossTotal * v.GetValue()
 	return discount, grossTotal - discount
 }
 

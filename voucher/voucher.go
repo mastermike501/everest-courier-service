@@ -1,33 +1,41 @@
 package voucher
 
 type Voucher struct {
-	Description      string
-	Value            float64
-	Valid            bool
+	description      string
+	value            float64
+	valid            bool
 	ValidForDelivery func(distance, weight float64) bool
+}
+
+func (v *Voucher) GetValue() float64 {
+	return v.value
+}
+
+func (v *Voucher) IsValid() bool {
+	return v.valid
 }
 
 var vouchers = map[string]Voucher{
 	"OFR001": {
-		Description: "10% Discount",
-		Value:       0.1,
-		Valid:       true,
+		description: "10% Discount",
+		value:       0.1,
+		valid:       true,
 		ValidForDelivery: func(distance, weight float64) bool {
 			return distance < 200 && (weight >= 70 && weight <= 200)
 		},
 	},
 	"OFR002": {
-		Description: "7% Discount",
-		Value:       0.07,
-		Valid:       true,
+		description: "7% Discount",
+		value:       0.07,
+		valid:       true,
 		ValidForDelivery: func(distance, weight float64) bool {
 			return (distance >= 50 && distance <= 150) && (weight >= 100 && weight <= 250)
 		},
 	},
 	"OFR003": {
-		Description: "5% Discount",
-		Value:       0.05,
-		Valid:       true,
+		description: "5% Discount",
+		value:       0.05,
+		valid:       true,
 		ValidForDelivery: func(distance, weight float64) bool {
 			return (distance >= 50 && distance <= 250) && (weight >= 10 && weight <= 150)
 		},
@@ -40,9 +48,9 @@ func GetVoucherInfo(code string) *Voucher {
 	}
 
 	return &Voucher{
-		Description: "No Discount",
-		Value:       0,
-		Valid:       false,
+		description: "No Discount",
+		value:       0,
+		valid:       false,
 		ValidForDelivery: func(distance, weight float64) bool {
 			return false
 		},
