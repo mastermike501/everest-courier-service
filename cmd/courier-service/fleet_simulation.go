@@ -15,10 +15,7 @@ func FleetSimulation(f *fleet.Fleet, shipments []*ev_package.Shipment) {
 	// fleet.
 	vehicles := []*fleet.Vehicle{}
 	for i := 0; i < f.GetNumVehicles(); i++ {
-		v := &fleet.Vehicle{
-			Name:       fmt.Sprint(i + 1),
-			ReturnTime: 0.0,
-		}
+		v := fleet.NewVehicle(fmt.Sprint(i+1), 0.0)
 		vehicles = append(vehicles, v)
 	}
 
@@ -50,7 +47,7 @@ func FleetSimulation(f *fleet.Fleet, shipments []*ev_package.Shipment) {
 		}
 
 		// set the return time for selected vehicle
-		selectedVehicle.ReturnTime = (s.OneWayDeliveryTime * 2) + currentTime
+		selectedVehicle.SetReturnTime((s.OneWayDeliveryTime * 2) + currentTime)
 
 		shipmentIdx++
 
@@ -63,11 +60,11 @@ func FleetSimulation(f *fleet.Fleet, shipments []*ev_package.Shipment) {
 }
 
 func getMinimumReturnTime(vehicles []*fleet.Vehicle) float64 {
-	minRetTime := vehicles[0].ReturnTime
+	minRetTime := vehicles[0].GetReturnTime()
 
 	for _, v := range vehicles {
-		if v.ReturnTime < minRetTime {
-			minRetTime = v.ReturnTime
+		if v.GetReturnTime() < minRetTime {
+			minRetTime = v.GetReturnTime()
 		}
 	}
 
@@ -82,7 +79,7 @@ func updateVehicleReturnTimes(vehicles []*fleet.Vehicle, curTime float64) {
 
 func selectFreeVehicle(vehicles []*fleet.Vehicle) *fleet.Vehicle {
 	for _, v := range vehicles {
-		if v.ReturnTime == 0.0 {
+		if v.GetReturnTime() == 0.0 {
 			return v
 		}
 	}
