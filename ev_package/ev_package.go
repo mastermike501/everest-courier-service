@@ -1,4 +1,4 @@
-package main
+package ev_package
 
 import (
 	"fmt"
