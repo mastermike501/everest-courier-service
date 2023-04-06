@@ -8,76 +8,49 @@ import (
 	"strings"
 )
 
-type Fleet struct {
-	NumVehicles        int
-	MaxSpeed           int
-	MaxCarriableWeight float64
-}
-
 func main() {
 	var baseDeliveryCost float64
 	var numOfPkgs int
 	var err error
 	var fleet *Fleet
 	reader := bufio.NewReader(os.Stdin)
-	baseDeliveryCost, numOfPkgs, err = mock_readDeliveryCostAndNumOfPkgs(reader)
-	packages := mock_readPackages()
-	fleet, err = mock_readFleetInfo(reader)
-
-	if err != nil {
-		os.Exit(1)
-	}
-
-	fmt.Print(numOfPkgs)
 
 	// read delivery cost and num of packages
-	// for {
-	// 	baseDeliveryCost, numOfPkgs, err = readDeliveryCostAndNumOfPkgs(reader)
-	// 	if err == nil {
-	// 		break
-	// 	}
-	// }
-
-	// packages := []Package{}
-
-	// // read package information
-	// for i := 0; i < numOfPkgs; i++ {
-	// 	fmt.Printf("Enter package %d information: ", i+1)
-
-	// 	newPackage, err := readPackage(reader)
-	// 	if err != nil {
-	// 		i--
-	// 		continue
-	// 	}
-
-	// 	packages = append(packages, *newPackage)
-	// }
-
-	// read fleet information
-	// for {
-	// 	fleet, err = readFleetInfo(reader)
-	// 	if err == nil {
-	// 		break
-	// 	}
-	// }
-
-	for _, pkg := range packages {
-		deliveryCost := calculateDeliveryCost(baseDeliveryCost, &pkg)
-		voucherInfo := getVoucherInfo(pkg.OfferCode)
-		discount := 0.0
-		totalCost := deliveryCost
-
-		isVoucherValid := voucherInfo.ValidForDelivery(pkg.Distance, pkg.Weight)
-		if isVoucherValid {
-			discount = deliveryCost * voucherInfo.Value
-			totalCost = deliveryCost - discount
+	for {
+		baseDeliveryCost, numOfPkgs, err = readDeliveryCostAndNumOfPkgs(reader)
+		if err == nil {
+			break
 		}
-
-		fmt.Printf("%s $%.2f $%.2f", pkg.Name, discount, totalCost)
-		fmt.Println()
 	}
 
-	remainingPkgs := make([]Package, len(packages))
+	// read package information
+	packages := []*Package{}
+	for i := 0; i < numOfPkgs; i++ {
+		fmt.Printf("Enter package %d information: ", i+1)
+
+		newPackage, err := readPackage(reader, baseDeliveryCost)
+		if err != nil {
+			i--
+			continue
+		}
+
+		packages = append(packages, newPackage)
+	}
+
+	// read fleet information
+	for {
+		fleet, err = readFleetInfo(reader)
+		if err == nil {
+			break
+		}
+	}
+
+	// delivery time calculations
+	for _, p := range packages {
+		p.CalculateTimeToDest(fleet.MaxSpeed)
+	}
+
+	remainingPkgs := make([]*Package, len(packages))
 	copy(remainingPkgs, packages)
 
 	// the "value" would be the weight itself since we are
@@ -87,7 +60,7 @@ func main() {
 		item := &KItem{
 			weight: pkg.Weight,
 			value:  pkg.Weight,
-			pkg:    &pkg,
+			pkg:    pkg,
 		}
 		items = append(items, *item)
 	}
@@ -111,14 +84,14 @@ func main() {
 		selectedPkgs := []*Package{}
 		for _, s := range selected {
 			pkg := &remainingPkgs[s]
-			pkg.DeliveryTime = calculateDeliveryTime(pkg.Distance, fleet.MaxSpeed)
-			selectedPkgs = append(selectedPkgs, &remainingPkgs[s])
+			selectedPkgs = append(selectedPkgs, *pkg)
 		}
 
 		// create a Shipment which takes in the list of packages and generates
 		// the total delivery time for the Shipment
 		shipment := Shipment{
-			DeliveryTime: 0.0,
+			OneWayDeliveryTime: 0.0,
+			Packages:           make(map[string]*Package),
 		}
 		shipment.addPackages(selectedPkgs)
 		shipments = append(shipments, &shipment)
@@ -128,9 +101,17 @@ func main() {
 		remainingPkgs = RemoveAtIndexPackage(remainingPkgs, selected)
 	}
 
+	FleetSimulation(fleet, shipments)
+
+	fmt.Println()
+	fmt.Println("----- Output -----")
+
+	for _, p := range packages {
+		p.Println()
+	}
 }
 
-func readPackage(reader *bufio.Reader) (*Package, error) {
+func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*Package, error) {
 	input, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("An error occured while reading input. Please try again", err)
@@ -155,12 +136,34 @@ func readPackage(reader *bufio.Reader) (*Package, error) {
 		return nil, err
 	}
 
+	voucher := getVoucherInfo(packageInfo[3])
+	discount, total := GetDiscountAndDeliveryCost(baseDeliveryCost, weight, distance, voucher)
+
 	return &Package{
 		Name:      packageInfo[0],
-		Weight:    float64(weight),
-		Distance:  float64(distance),
-		OfferCode: packageInfo[3],
+		Weight:    weight,
+		Distance:  distance,
+		Discount:  discount,
+		TotalCost: total,
 	}, nil
+}
+
+func GetDiscountAndDeliveryCost(baseDeliveryCost, weight, distance float64, v *Voucher) (discount, total float64) {
+	grossTotal := baseDeliveryCost + (weight * 10) + (distance * 5)
+
+	// invalid voucher? Return the gross
+	if !v.Valid {
+		return 0, grossTotal
+	}
+
+	// voucher not valid for package parameters? Return the gross
+	isVoucherValid := v.ValidForDelivery(distance, weight)
+	if !isVoucherValid {
+		return 0, grossTotal
+	}
+
+	discount = grossTotal * v.Value
+	return discount, grossTotal - discount
 }
 
 func readDeliveryCostAndNumOfPkgs(reader *bufio.Reader) (float64, int, error) {
@@ -198,19 +201,24 @@ func readFleetInfo(reader *bufio.Reader) (*Fleet, error) {
 
 	result := strings.Split(strings.TrimSpace(input), " ")
 
+	if len(result) != 3 {
+		fmt.Println("Not enough information provided. Please try again")
+		return nil, fmt.Errorf("not enough information provided")
+	}
+
 	numVehicles, err := strconv.Atoi(result[0])
 	if err != nil {
 		fmt.Println("Number of vehicles is an invalid number. Please try again", err)
 		return nil, err
 	}
 
-	maxSpeed, err := strconv.Atoi(result[0])
+	maxSpeed, err := strconv.Atoi(result[1])
 	if err != nil {
 		fmt.Println("Max speed is an invalid number. Please try again", err)
 		return nil, err
 	}
 
-	maxCarriableWeight, err := strconv.ParseFloat(result[0], 64)
+	maxCarriableWeight, err := strconv.ParseFloat(result[2], 64)
 	if err != nil {
 		fmt.Println("Max carriable weight is an invalid number. Please try again", err)
 		return nil, err
@@ -221,12 +229,4 @@ func readFleetInfo(reader *bufio.Reader) (*Fleet, error) {
 		MaxSpeed:           maxSpeed,
 		MaxCarriableWeight: maxCarriableWeight,
 	}, nil
-}
-
-func calculateDeliveryCost(baseDeliveryCost float64, pkg *Package) float64 {
-	return baseDeliveryCost + (pkg.Weight * 10) + (pkg.Distance * 5)
-}
-
-func calculateDeliveryTime(distance float64, speed int) float64 {
-	return distance / float64(speed)
 }
