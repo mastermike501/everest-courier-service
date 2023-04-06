@@ -6,10 +6,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/mastermike501/everest-courier-service/ev_package"
 	"github.com/mastermike501/everest-courier-service/fleet"
 )
 
-func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*Package, error) {
+func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*ev_package.Package, error) {
 	input, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("An error occured while reading input. Please try again", err)
@@ -37,7 +38,7 @@ func readPackage(reader *bufio.Reader, baseDeliveryCost float64) (*Package, erro
 	voucher := GetVoucherInfo(packageInfo[3])
 	discount, total := GetDiscountAndDeliveryCost(baseDeliveryCost, weight, distance, voucher)
 
-	return &Package{
+	return &ev_package.Package{
 		Name:      packageInfo[0],
 		Weight:    weight,
 		Distance:  distance,

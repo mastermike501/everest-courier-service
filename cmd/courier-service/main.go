@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/mastermike501/everest-courier-service/ev_package"
 	"github.com/mastermike501/everest-courier-service/fleet"
 )
 
@@ -24,7 +25,7 @@ func main() {
 	}
 
 	// read package information
-	packages := []*Package{}
+	packages := []*ev_package.Package{}
 	for i := 0; i < numOfPkgs; i++ {
 		fmt.Printf("Enter package %d information: ", i+1)
 
@@ -62,8 +63,8 @@ func main() {
 	}
 }
 
-func runKnapsackSolver(packages []*Package, fleet *fleet.Fleet) (shipments []*Shipment) {
-	remainingPkgs := make([]*Package, len(packages))
+func runKnapsackSolver(packages []*ev_package.Package, fleet *fleet.Fleet) (shipments []*ev_package.Shipment) {
+	remainingPkgs := make([]*ev_package.Package, len(packages))
 	copy(remainingPkgs, packages)
 
 	// the "value" would be the weight itself since we are
@@ -93,7 +94,7 @@ func runKnapsackSolver(packages []*Package, fleet *fleet.Fleet) (shipments []*Sh
 		// 1. get the package
 		// 2. calculate the package's delivery time
 		// 3. add the package to the list of packages (ie. shipment)
-		selectedPkgs := []*Package{}
+		selectedPkgs := []*ev_package.Package{}
 		for _, s := range selected {
 			pkg := &remainingPkgs[s]
 			selectedPkgs = append(selectedPkgs, *pkg)
@@ -101,9 +102,9 @@ func runKnapsackSolver(packages []*Package, fleet *fleet.Fleet) (shipments []*Sh
 
 		// create a Shipment which takes in the list of packages and generates
 		// the total delivery time for the Shipment
-		shipment := Shipment{
+		shipment := ev_package.Shipment{
 			OneWayDeliveryTime: 0.0,
-			Packages:           make(map[string]*Package),
+			Packages:           make(map[string]*ev_package.Package),
 		}
 		shipment.AddPackages(selectedPkgs)
 		shipments = append(shipments, &shipment)

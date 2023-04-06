@@ -1,5 +1,7 @@
 package main
 
+import "github.com/mastermike501/everest-courier-service/ev_package"
+
 func Contains(elems []int, v int) bool {
 	for _, s := range elems {
 		if v == s {
@@ -26,9 +28,9 @@ func RemoveAtIndexKItem(slice []KItem, indices []int) []KItem {
 	return filtered
 }
 
-func RemoveAtIndexPackage(slice []*Package, indices []int) []*Package {
+func RemoveAtIndexPackage(slice []*ev_package.Package, indices []int) []*ev_package.Package {
 	// Create a new slice to hold the filtered elements
-	filtered := make([]*Package, 0)
+	filtered := make([]*ev_package.Package, 0)
 	// Create a map to hold the indices to remove
 	indicesToRemove := make(map[int]bool)
 	for _, index := range indices {

@@ -1,5 +1,7 @@
 package main
 
+import "github.com/mastermike501/everest-courier-service/ev_package"
+
 /*
   This implementation of the 0-1 knapsack problem uses dynamic programming to
 	compute the maximum value that can be achieved for each subset of items and
@@ -12,7 +14,7 @@ package main
 type KItem struct {
 	weight float64
 	value  float64
-	pkg    *Package
+	pkg    *ev_package.Package
 }
 
 func KnapsackSolver(items []KItem, capacity float64) []int {

@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 
+	"github.com/mastermike501/everest-courier-service/ev_package"
 	"github.com/mastermike501/everest-courier-service/fleet"
 )
 
 // Calculate package delivery times by performing discrete Simulate
-func FleetSimulation(f *fleet.Fleet, shipments []*Shipment) {
+func FleetSimulation(f *fleet.Fleet, shipments []*ev_package.Shipment) {
 	currentTime := 0.0
 
 	// create vehicles
