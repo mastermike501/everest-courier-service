@@ -47,7 +47,7 @@ func main() {
 
 	// delivery time calculations
 	for _, p := range packages {
-		p.CalculateTimeToDest(fleet.MaxSpeed)
+		p.CalculateTimeToDest(fleet.GetMaxSpeed())
 	}
 
 	shipments := runKnapsackSolver(packages, fleet)
@@ -87,7 +87,7 @@ func runKnapsackSolver(packages []*Package, fleet *fleet.Fleet) (shipments []*Sh
 	// repeat until no more remaining packages
 	for len(remainingPkgs) > 0 {
 		// solve 0/1 knapsack problem to get selected packages for a shipment
-		selected := KnapsackSolver(items, fleet.MaxCarriableWeight)
+		selected := KnapsackSolver(items, fleet.GetMaxCarriableWeight())
 
 		// for each index returned:
 		// 1. get the package

@@ -1,25 +1,27 @@
 package fleet
 
 type Fleet struct {
-	NumVehicles        int
-	MaxSpeed           int
-	MaxCarriableWeight float64
+	numVehicles        int
+	maxSpeed           int
+	maxCarriableWeight float64
 }
 
-type Vehicle struct {
-	Name       string
-	ReturnTime float64
-}
-
-func (v *Vehicle) UpdateReturnTime(curTime float64) {
-	// if the calculated return time is negative, it means the vehicle
-	// has already reached back to depot. Assign ReturnTime to zero
-	returnTime := v.ReturnTime - curTime
-	if returnTime < 0 {
-		v.ReturnTime = 0
-		return
+func NewFleet(vehicles, speed int, weight float64) *Fleet {
+	return &Fleet{
+		numVehicles:        vehicles,
+		maxSpeed:           speed,
+		maxCarriableWeight: weight,
 	}
+}
 
-	// else, the returnTime would be the time remaining
-	v.ReturnTime = returnTime
+func (f *Fleet) GetNumVehicles() int {
+	return f.numVehicles
+}
+
+func (f *Fleet) GetMaxSpeed() int {
+	return f.maxSpeed
+}
+
+func (f *Fleet) GetMaxCarriableWeight() float64 {
+	return f.maxCarriableWeight
 }

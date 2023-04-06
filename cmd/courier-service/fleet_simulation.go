@@ -13,7 +13,7 @@ func FleetSimulation(f *fleet.Fleet, shipments []*Shipment) {
 	// create vehicles
 	// fleet.
 	vehicles := []*fleet.Vehicle{}
-	for i := 0; i < f.NumVehicles; i++ {
+	for i := 0; i < f.GetNumVehicles(); i++ {
 		v := &fleet.Vehicle{
 			Name:       fmt.Sprint(i + 1),
 			ReturnTime: 0.0,

@@ -122,9 +122,5 @@ func readFleetInfo(reader *bufio.Reader) (*fleet.Fleet, error) {
 		return nil, err
 	}
 
-	return &fleet.Fleet{
-		NumVehicles:        numVehicles,
-		MaxSpeed:           maxSpeed,
-		MaxCarriableWeight: maxCarriableWeight,
-	}, nil
+	return fleet.NewFleet(numVehicles, maxSpeed, maxCarriableWeight), nil
 }
