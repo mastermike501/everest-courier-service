@@ -1,4 +1,4 @@
-package main
+package fleet
 
 type Fleet struct {
 	NumVehicles        int
